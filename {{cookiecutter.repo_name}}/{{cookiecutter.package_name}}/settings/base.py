@@ -266,12 +266,12 @@ TEMPLATES = [
             'translation_engine': 'django.utils.translation',
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
-                'django.core.context_processors.debug',
-                'django.core.context_processors.i18n',
-                'django.core.context_processors.media',
-                'django.core.context_processors.static',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
                 'django.contrib.messages.context_processors.messages',
-                'django.core.context_processors.request',
+                'django.template.context_processors.request',
                 'cms.context_processors.settings',
                 'cms.apps.pages.context_processors.pages',
                 'social_django.context_processors.backends',
@@ -288,12 +288,12 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
-                'django.core.context_processors.debug',
-                'django.core.context_processors.i18n',
-                'django.core.context_processors.media',
-                'django.core.context_processors.static',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
                 'django.contrib.messages.context_processors.messages',
-                'django.core.context_processors.request',
+                'django.template.context_processors.request',
                 'cms.context_processors.settings',
                 'cms.apps.pages.context_processors.pages',
                 'social_django.context_processors.backends',
@@ -477,15 +477,10 @@ if 'test' in sys.argv:
     # Note: This will not catch a situation where a developer commits model
     # changes without the migration files.
 
-    class DisableMigrations(object):
-
-        def __contains__(self, item):
-            return True
-
-        def __getitem__(self, item):
-            return 'notmigrations'
-
-    MIGRATION_MODULES = DisableMigrations()
+    MIGRATION_MODULES = {}
+    for app in INSTALLED_APPS:
+        app_name = app.split('.')[-1]
+        MIGRATION_MODULES[app_name] = None
 
     # Remove the localisation middleware
     if 'cms.middleware.LocalisationMiddleware' in MIDDLEWARE_CLASSES:
